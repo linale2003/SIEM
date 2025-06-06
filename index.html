@@ -37,7 +37,7 @@
   <script>
     async function fetchLogs() {
       try {
-        const response = await fetch("http://10.10.11.101:5000/api/logs");
+        const response = await fetch("http://10.10.11.100:5000/api/logs");
         const logs = await response.json();
         const tbody = document.getElementById("log-table");
         tbody.innerHTML = "";
