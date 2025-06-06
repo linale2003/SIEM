@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>SIEM Логи</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+    th {
+      background-color: #333;
+      color: white;
+    }
+    .danger { color: red; font-weight: bold; }
+    .ok { color: green; }
+  </style>
+</head>
+<body>
+  <h1>SIEM Логи</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Время</th>
+        <th>Хост</th>
+        <th>Сообщение</th>
+        <th>ИИ-метка</th>
+      </tr>
+    </thead>
+    <tbody id="log-table"></tbody>
+  </table>
+
+  <script>
+    async function fetchLogs() {
+      try {
+        const response = await fetch("http://10.10.11.101:5000/api/logs");
+        const logs = await response.json();
+        const tbody = document.getElementById("log-table");
+        tbody.innerHTML = "";
+        logs.forEach(log => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${new Date(log.timestamp).toLocaleString()}</td>
+            <td>${log.host || ""}</td>
+            <td>${log.event || ""}</td>
+            <td class="${log.ai_tag === 'Опасно' ? 'danger' : 'ok'}">${log.ai_tag}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (e) {
+        alert("Ошибка загрузки логов: " + e);
+      }
+    }
+
+    fetchLogs();
+    setInterval(fetchLogs, 10000); // обновление каждые 10 секунд
+  </script>
+</body>
+</html>
